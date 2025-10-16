@@ -8,7 +8,7 @@ import { hasProp } from 'lib/util'
 import { msg } from 'mosi/client'
 import { categories as installCategories } from 'storage/transform'
 import { downloadJSON } from 'lib/dom'
-import compareVersions from 'compare-versions'
+import { compare as compareVersions } from 'compare-versions'
 
 // TODO: test this code, lots of room for error, should really have unit tests
 
@@ -67,7 +67,7 @@ export async function storageImportProcedure () {
   const input = document.createElement('input')
   input.setAttribute('type', 'file')
   input.setAttribute('accept', '.json')
-  input.addEventListener('change', e => {
+  input.addEventListener('change', (e) => {
     const reader = new FileReader()
     reader.onload = async () => {
       await storageResetProcedure()
@@ -99,7 +99,7 @@ export async function storageExportProcedure () {
   const profiles = {}
   for (const category in customProfiles) {
     profiles[category] = {}
-    customProfiles[category].forEach(profile => {
+    customProfiles[category].forEach((profile) => {
       profiles[category][profile] = options[`${category}_${profile}`]
     })
   }
@@ -135,8 +135,9 @@ async function validateConfig () {
     for (const item of _config) {
       if (!hasProp(item, 'type')) {
         throw Error(
-          `Config validation failed: item ${category}:${item.key ||
-            '[no key]'} has no type`,
+          `Config validation failed: item ${category}:${
+            item.key || '[no key]'
+          } has no type`,
           item
         )
       }
@@ -164,7 +165,7 @@ async function createBuiltInProfiles () {
   for (const category of categories) {
     const request = await fetch(`/default_${category}.json`)
     const { profiles } = await request.json()
-    builtInProfiles[category] = profiles.map(profile => profile.name)
+    builtInProfiles[category] = profiles.map((profile) => profile.name)
   }
   await storageSet({ builtInProfiles })
 }
@@ -280,17 +281,13 @@ async function deleteCategories () {
  * Accounts for the case where the active profile has been deleted
  */
 async function correctActiveProfiles () {
-  const {
-    categories,
-    activeProfiles,
-    builtInProfiles,
-    customProfiles
-  } = await storageGet([
-    'categories',
-    'activeProfiles',
-    'builtInProfiles',
-    'customProfiles'
-  ])
+  const { categories, activeProfiles, builtInProfiles, customProfiles } =
+    await storageGet([
+      'categories',
+      'activeProfiles',
+      'builtInProfiles',
+      'customProfiles'
+    ])
   for (const category of categories) {
     if (customProfiles[category] === undefined) {
       customProfiles[category] = builtInProfiles[category]

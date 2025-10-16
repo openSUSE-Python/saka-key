@@ -3,7 +3,7 @@ import { applyMiddleware, createStore } from 'redux'
 import { initialize as initClient } from 'client'
 import { msg } from 'mosi/client'
 import logger from 'redux-logger'
-import thunk from 'redux-thunk'
+import { thunk } from 'redux-thunk'
 import rootReducer from './reducers'
 import { initialize } from './actions'
 import { storageGet, storageSet } from 'storage/storage'
@@ -26,18 +26,18 @@ async function initializeOptionsPage () {
 initializeOptionsPage()
 
 initClient('options_page', {
-  SYNC_ACTION: action => store.dispatch(action),
+  SYNC_ACTION: (action) => store.dispatch(action),
   RERENDER: initializeOptionsPage
 })
 
-const synchronizeOptionsGUIs = store => next => action => {
+const synchronizeOptionsGUIs = (store) => (next) => (action) => {
   if (!action.syncAction && action.type !== 'INITIALIZE') {
     msg('options_page&other', 'SYNC_ACTION', { ...action, syncAction: true })
   }
   return next(action)
 }
 
-const writeToStorage = store => next => action => {
+const writeToStorage = (store) => (next) => (action) => {
   const nextState = next(action)
   if (!action.syncAction && action.type !== 'INITIALIZE') {
     storageSet(store.getState())

@@ -4,9 +4,9 @@ import Header from './Header'
 // import Message from './Message';
 import OptionsList from './OptionsList'
 
-import '@material/toolbar/dist/mdc.toolbar.css'
-import '@material/select/dist/mdc.select.css'
-import '@material/fab/dist/mdc.fab.css'
+import '@material/top-app-bar/mdc-top-app-bar.scss'
+import '@material/select/mdc-select.scss'
+import '@material/fab/mdc-fab.scss'
 import './style.css'
 
 class SettingsCard extends Component {
@@ -14,7 +14,7 @@ class SettingsCard extends Component {
     return (
       <div
         id={`settings_card_${props.category}`}
-        className='mdc-card demo-card demo-card--with-avatar mode-card'
+        className="mdc-card demo-card demo-card--with-avatar mode-card"
         style={{ backgroundColor: '#ffffff' }}
       >
         <Header {...props} />

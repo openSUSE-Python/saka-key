@@ -1,7 +1,7 @@
 const webpack = require('webpack')
 const CopyWebpackPlugin = require('copy-webpack-plugin')
 const GenerateJsonPlugin = require('generate-json-webpack-plugin')
-const merge = require('webpack-merge')
+const { merge } = require('webpack-merge')
 const path = require('path')
 
 // markdown convert to html
@@ -9,8 +9,9 @@ const marked = require('marked')
 const renderer = new marked.Renderer()
 
 module.exports = function (env, argv) {
-  console.log(env)
-  const [browser] = env.split(':')
+  const browser = Object.keys(env).find(
+    (key) => key !== 'WEBPACK_BUNDLE' && key !== 'WEBPACK_BUILD'
+  )
   const version = require('./manifest/common.json').version
 
   const config = {
@@ -39,6 +40,10 @@ module.exports = function (env, argv) {
           use: ['style-loader', 'css-loader']
         },
         {
+          test: /\.scss$/,
+          use: ['style-loader', 'css-loader', 'sass-loader']
+        },
+        {
           test: /\.md$/,
           use: [
             {
@@ -62,21 +67,23 @@ module.exports = function (env, argv) {
       }
     },
     plugins: [
-      new CopyWebpackPlugin([
-        {
-          from: 'static'
-        },
-        {
-          context: 'src/options',
-          from: '**/default.json',
-          to: 'default_[folder].json'
-        },
-        {
-          context: 'src/options',
-          from: '**/config.json',
-          to: 'config_[folder].json'
-        }
-      ]),
+      new CopyWebpackPlugin({
+        patterns: [
+          {
+            from: 'static'
+          },
+          {
+            context: 'src/options',
+            from: '**/default.json',
+            to: 'default_[folder].json'
+          },
+          {
+            context: 'src/options',
+            from: '**/config.json',
+            to: 'config_[folder].json'
+          }
+        ]
+      }),
       new GenerateJsonPlugin(
         'manifest.json',
         merge(
