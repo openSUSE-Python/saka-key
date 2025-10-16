@@ -23,6 +23,17 @@ jobs:
           npm ci
           npm run release
 
+      - name: Upload artifacts for devel branch
+        if: github.ref == 'refs/heads/devel'
+        uses: actions/upload-artifact@v4
+        with:
+          name: saka-key-artifacts
+          path: |
+            chrome-prod.zip
+            firefox-prod.zip
+            chrome-debug.zip
+            firefox-debug.zip
+
       - name: Rename assets
         if: startsWith(github.ref, 'refs/tags/')
         run: |
